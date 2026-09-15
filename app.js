@@ -3,46 +3,29 @@
   AI NEWS STUDIO FRONTEND
 */
 
-const API_BASE =
-  window.SCAG_API_URL ||
-  "http://localhost:8000";
+/*
+  IMPORTANT:
+  Change this to your real backend address after deploying server.py.
 
-const videoInput =
-  document.getElementById("videoInput");
+  Example:
+  const API_URL = "https://your-backend.example.com";
+*/
 
-const mediaInput =
-  document.getElementById("mediaInput");
+const API_URL = window.SCAG_API_URL || "http://localhost:8000";
 
-const fileInfo =
-  document.getElementById("fileInfo");
 
-const scene =
-  document.getElementById("scene");
+const videoInput = document.getElementById("videoInput");
+const sourceVideo = document.getElementById("sourceVideo");
 
-const presenter =
-  document.getElementById("presenter");
+const scene = document.getElementById("scene");
 
-const headline =
-  document.getElementById("headline");
+const headline = document.getElementById("headline");
+const lowerThird = document.getElementById("lowerThird");
+const ticker = document.getElementById("ticker");
 
-const ticker =
-  document.getElementById("ticker");
+const directorBtn = document.getElementById("directorBtn");
 
-const createBtn =
-  document.getElementById("createBtn");
-
-const previewBtn =
-  document.getElementById("previewBtn");
-
-const previewVideo =
-  document.getElementById("previewVideo");
-
-const processing =
-  document.getElementById("processing");
-
-const processingTitle =
-  document.getElementById("processingTitle");
-
+const processing = document.getElementById("processing");
 const processingMessage =
   document.getElementById("processingMessage");
 
@@ -52,496 +35,312 @@ const progressBar =
 const progressText =
   document.getElementById("progressText");
 
-const sceneLabel =
-  document.getElementById("sceneLabel");
+const result =
+  document.getElementById("result");
 
-const headlinePreview =
-  document.getElementById("headlinePreview");
-
-const namePreview =
-  document.getElementById("namePreview");
-
-const tickerPreview =
-  document.getElementById("tickerPreview");
-
-const resultPanel =
-  document.getElementById("resultPanel");
-
-const resultMessage =
-  document.getElementById("resultMessage");
+const resultVideo =
+  document.getElementById("resultVideo");
 
 const downloadBtn =
   document.getElementById("downloadBtn");
 
+const previewStatus =
+  document.getElementById("previewStatus");
+
+const screenHeadline =
+  document.getElementById("screenHeadline");
+
+
 let selectedVideo = null;
-let selectedFormat = "16:9";
-let currentJobId = null;
 
 
-/* -------------------------
+/* =========================
    VIDEO SELECTION
-------------------------- */
+========================= */
 
-videoInput.addEventListener(
-  "change",
-  () => {
+videoInput.addEventListener("change", () => {
 
-    selectedVideo =
-      videoInput.files[0] || null;
+  const file = videoInput.files[0];
 
-    if (!selectedVideo) {
-
-      fileInfo.textContent =
-        "No video selected";
-
-      return;
-    }
-
-    const size =
-      (
-        selectedVideo.size /
-        (1024 * 1024)
-      ).toFixed(1);
-
-    fileInfo.textContent =
-      `${selectedVideo.name} • ${size} MB`;
-
-    const url =
-      URL.createObjectURL(
-        selectedVideo
-      );
-
-    previewVideo.src = url;
-
-    previewVideo.style.display =
-      "block";
+  if (!file) {
+    return;
   }
-);
+
+  selectedVideo = file;
+
+  const url = URL.createObjectURL(file);
+
+  sourceVideo.src = url;
+  sourceVideo.style.display = "block";
+
+  previewStatus.textContent = "VIDEO LOADED";
+
+});
 
 
-/* -------------------------
-   SUPPORTING MEDIA
-------------------------- */
+/* =========================
+   HEADLINE PREVIEW
+========================= */
 
-mediaInput.addEventListener(
-  "change",
-  () => {
+headline.addEventListener("input", () => {
 
-    const count =
-      mediaInput.files.length;
+  const text =
+    headline.value.trim() || "NEWS";
 
-    if (count) {
+  screenHeadline.textContent = text;
 
-      console.log(
-        `${count} supporting media file(s) selected.`
-      );
-    }
-  }
-);
+});
 
 
-/* -------------------------
-   GRAPHICS LIVE PREVIEW
-------------------------- */
-
-headline.addEventListener(
-  "input",
-  () => {
-
-    headlinePreview.textContent =
-      headline.value ||
-      "SCAG LIVE TV NEWS";
-  }
-);
-
-presenter.addEventListener(
-  "input",
-  () => {
-
-    namePreview.textContent =
-      presenter.value ||
-      "PRESENTER";
-  }
-);
-
-ticker.addEventListener(
-  "input",
-  () => {
-
-    tickerPreview.textContent =
-      ticker.value ||
-      "DETERMINED TO EXCEL • SCAG LIVE TV";
-  }
-);
-
-
-/* -------------------------
-   FORMAT
-------------------------- */
-
-document
-  .querySelectorAll(".format")
-  .forEach(button => {
-
-    button.addEventListener(
-      "click",
-      () => {
-
-        document
-          .querySelectorAll(".format")
-          .forEach(
-            item =>
-              item.classList.remove(
-                "active"
-              )
-          );
-
-        button.classList.add(
-          "active"
-        );
-
-        selectedFormat =
-          button.dataset.format;
-
-        const frame =
-          document.getElementById(
-            "previewFrame"
-          );
-
-        if (
-          selectedFormat === "9:16"
-        ) {
-
-          frame.style.aspectRatio =
-            "9 / 16";
-
-        } else {
-
-          frame.style.aspectRatio =
-            "16 / 9";
-        }
-      }
-    );
-  });
-
-
-/* -------------------------
-   ORIGINAL VIDEO PREVIEW
-------------------------- */
-
-previewBtn.addEventListener(
-  "click",
-  () => {
-
-    if (!selectedVideo) {
-
-      alert(
-        "Please upload a presenter video first."
-      );
-
-      return;
-    }
-
-    previewVideo.style.display =
-      "block";
-
-    previewVideo.play();
-  }
-);
-
-
-/* -------------------------
+/* =========================
    AI DIRECTOR
-------------------------- */
+========================= */
 
-createBtn.addEventListener(
-  "click",
-  async () => {
+directorBtn.addEventListener("click", async () => {
 
-    if (!selectedVideo) {
+  if (!selectedVideo) {
 
-      alert(
-        "Please upload your presenter video first."
-      );
+    alert("Please select a presenter video first.");
 
-      return;
-    }
-
-    await createProduction();
+    return;
   }
-);
 
+  processing.classList.remove("hidden");
+  result.classList.add("hidden");
 
-async function createProduction() {
-
-  resultPanel.classList.remove(
-    "show"
-  );
-
-  processing.classList.add(
-    "show"
-  );
+  directorBtn.disabled = true;
 
   setProgress(
     5,
-    "Uploading video..."
-  );
-
-  const form =
-    new FormData();
-
-  form.append(
-    "video",
-    selectedVideo
-  );
-
-  form.append(
-    "scene",
-    scene.value
-  );
-
-  form.append(
-    "presenters",
-    "auto"
-  );
-
-  form.append(
-    "headline",
-    headline.value
-  );
-
-  form.append(
-    "lower_third",
-    presenter.value
-  );
-
-  form.append(
-    "ticker",
-    ticker.value
-  );
-
-  form.append(
-    "format",
-    selectedFormat
+    "Uploading presenter video..."
   );
 
   try {
 
-    const response =
-      await fetch(
-        `${API_BASE}/api/jobs`,
-        {
-          method: "POST",
-          body: form
-        }
-      );
+    const formData = new FormData();
+
+    formData.append(
+      "video",
+      selectedVideo
+    );
+
+    formData.append(
+      "scene",
+      scene.value
+    );
+
+    formData.append(
+      "presenters",
+      "auto"
+    );
+
+    formData.append(
+      "headline",
+      headline.value
+    );
+
+    formData.append(
+      "lower_third",
+      lowerThird.value
+    );
+
+    formData.append(
+      "ticker",
+      ticker.value
+    );
+
+
+    const response = await fetch(
+      `${API_URL}/api/jobs`,
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+
 
     if (!response.ok) {
 
-      const error =
+      const errorText =
         await response.text();
 
-      throw new Error(error);
+      throw new Error(
+        errorText || "Upload failed."
+      );
+
     }
 
-    const data =
+
+    const job =
       await response.json();
 
-    currentJobId =
-      data.job_id;
 
     setProgress(
       10,
-      "Video uploaded. AI Director started."
+      "Video uploaded. AI Director is starting..."
     );
 
-    sceneLabel.textContent =
-      "AI DIRECTOR PROCESSING";
 
-    await monitorJob(
-      currentJobId
-    );
+    await monitorJob(job.job_id);
+
 
   } catch (error) {
 
     console.error(error);
 
-    processingTitle.textContent =
-      "PROCESSING ERROR";
-
     processingMessage.textContent =
-      error.message ||
-      "Unable to connect to SCAG LIVE TV server.";
+      "Unable to connect to the SCAG LIVE TV AI server.";
 
-    progressBar.style.width =
-      "0%";
+    alert(
+      "AI server connection failed.\n\n" +
+      "Make sure the backend is running and API_URL is correct."
+    );
 
-    progressText.textContent =
-      "ERROR";
+    directorBtn.disabled = false;
+
   }
-}
+
+});
 
 
-/* -------------------------
-   MONITOR SERVER JOB
-------------------------- */
+/* =========================
+   MONITOR JOB
+========================= */
 
-async function monitorJob(
-  jobId
-) {
+async function monitorJob(jobId) {
 
   let finished = false;
 
+
   while (!finished) {
 
-    const response =
-      await fetch(
-        `${API_BASE}/api/jobs/${jobId}`
-      );
+    const response = await fetch(
+      `${API_URL}/api/jobs/${jobId}`
+    );
+
 
     if (!response.ok) {
 
       throw new Error(
         "Unable to read processing status."
       );
+
     }
+
 
     const job =
       await response.json();
 
-    const progress =
-      Number(job.progress || 0);
 
     setProgress(
-      progress,
-      job.message ||
-      "Processing..."
+      job.progress || 0,
+      job.message || "Processing..."
     );
 
-    if (
-      job.status ===
-      "complete"
-    ) {
+
+    if (job.status === "complete") {
 
       finished = true;
 
-      processing.classList.remove(
-        "show"
-      );
+      showResult(job);
 
-      sceneLabel.textContent =
-        job.selected_scene ||
-        "PRODUCTION COMPLETE";
-
-      resultPanel.classList.add(
-        "show"
-      );
-
-      resultMessage.textContent =
-        "SCAG LIVE TV production is ready.";
-
-      if (job.download_url) {
-
-        downloadBtn.href =
-          API_BASE +
-          job.download_url;
-      }
-
-      break;
     }
 
-    if (
-      job.status ===
-      "failed"
-    ) {
+
+    if (job.status === "failed") {
 
       throw new Error(
-        job.message ||
-        "AI processing failed."
+        job.message || "Processing failed."
       );
+
     }
 
-    await wait(
-      1500
-    );
+
+    if (!finished) {
+
+      await sleep(1500);
+
+    }
+
   }
+
 }
 
 
-/* -------------------------
+/* =========================
+   RESULT
+========================= */
+
+function showResult(job) {
+
+  processing.classList.add("hidden");
+
+  result.classList.remove("hidden");
+
+  previewStatus.textContent =
+    "PRODUCTION COMPLETE";
+
+
+  if (job.download_url) {
+
+    const url =
+      API_URL + job.download_url;
+
+    resultVideo.src = url;
+
+    downloadBtn.href = url;
+
+    downloadBtn.style.display =
+      "inline-flex";
+
+  } else {
+
+    processingMessage.textContent =
+      "The server completed without producing a video.";
+
+  }
+
+
+  directorBtn.disabled = false;
+
+}
+
+
+/* =========================
    PROGRESS
-------------------------- */
+========================= */
 
-function setProgress(
-  value,
-  message
-) {
+function setProgress(value, message) {
 
-  const safe =
+  const safeValue =
     Math.max(
       0,
-      Math.min(
-        100,
-        Number(value)
-      )
+      Math.min(100, Number(value))
     );
+
 
   progressBar.style.width =
-    `${safe}%`;
+    `${safeValue}%`;
+
 
   progressText.textContent =
-    `${Math.round(safe)}%`;
+    `${Math.round(safeValue)}%`;
+
 
   processingMessage.textContent =
-    message || "";
+    message;
+
 }
 
 
-/* -------------------------
-   UTILITY
-------------------------- */
+/* =========================
+   HELPERS
+========================= */
 
-function wait(
-  milliseconds
-) {
+function sleep(ms) {
 
   return new Promise(
-    resolve =>
-      setTimeout(
-        resolve,
-        milliseconds
-      )
+    resolve => setTimeout(resolve, ms)
   );
+
 }
-
-
-/* -------------------------
-   SERVER CHECK
-------------------------- */
-
-async function checkServer() {
-
-  try {
-
-    const response =
-      await fetch(
-        `${API_BASE}/health`
-      );
-
-    if (!response.ok) {
-      throw new Error();
-    }
-
-    console.log(
-      "SCAG LIVE TV server connected."
-    );
-
-  } catch {
-
-    console.warn(
-      "SCAG LIVE TV backend is not currently connected."
-    );
-  }
-}
-
-checkServer();
