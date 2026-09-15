@@ -3,162 +3,548 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SCAG LIVE TV AI NEWS STUDIO</title>
+  <title>SCAG LIVE TV — AI News Studio</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<header class="topbar">
-  <div class="brand">
-    <div class="logo-box">SCAG</div>
-    <div>
-      <h1>SCAG LIVE TV</h1>
-      <p>AI NEWS STUDIO</p>
-    </div>
-  </div>
+<div class="app">
 
-  <div class="status">
-    <span class="dot"></span>
-    SYSTEM READY
-  </div>
-</header>
+  <!-- TOP BAR -->
+  <header class="topbar">
 
-<main>
+    <div class="station">
+      <div class="crest">SCAG</div>
 
-<section class="hero">
-  <h2>SCAG LIVE TV AI NEWS STUDIO</h2>
-  <p>
-    Transform your original presenter video into a professional virtual
-    television newsroom while preserving the presenter's natural movement,
-    expression, voice and timing.
-  </p>
-</section>
-
-<section class="workspace">
-
-  <div class="panel">
-
-    <h3>1. UPLOAD PRESENTER VIDEO</h3>
-
-    <label class="upload">
-      <input id="videoInput" type="file"
-             accept="video/mp4,video/quicktime,video/webm">
-      <strong>＋ SELECT VIDEO</strong>
-      <span>MP4 • MOV • WEBM</span>
-    </label>
-
-    <video id="sourceVideo"
-           class="source-video"
-           controls
-           playsinline>
-    </video>
-
-    <h3>2. SELECT STUDIO</h3>
-
-    <select id="scene">
-      <option value="main">Main News Desk — 2 Chairs</option>
-      <option value="single">Single Presenter</option>
-      <option value="standing">Standing News</option>
-      <option value="interview">Interview</option>
-      <option value="weather">Weather</option>
-      <option value="breaking">Breaking News</option>
-    </select>
-
-    <h3>3. NEWS GRAPHICS</h3>
-
-    <input id="headline"
-           type="text"
-           placeholder="Headline">
-
-    <input id="lowerThird"
-           type="text"
-           placeholder="Presenter name / Lower third">
-
-    <input id="ticker"
-           type="text"
-           placeholder="News ticker">
-
-    <button id="directorBtn" class="director">
-      CREATE WITH AI DIRECTOR
-    </button>
-
-  </div>
-
-
-  <div class="panel studio-panel">
-
-    <div class="studio-header">
-      <span>STUDIO PREVIEW</span>
-      <span id="previewStatus">WAITING FOR VIDEO</span>
+      <div>
+        <div class="station-name">SCAG LIVE TV</div>
+        <div class="station-sub">AI NEWS STUDIO</div>
+      </div>
     </div>
 
-    <div class="studio">
+    <div class="top-actions">
+      <span class="live-dot"></span>
+      <span>AI DIRECTOR READY</span>
+      <button class="icon-btn">⚙</button>
+    </div>
 
-      <div class="studio-screen">
-        <div class="screen-logo">SCAG LIVE TV</div>
-        <div class="screen-news" id="screenHeadline">
-          NEWS
+  </header>
+
+
+  <!-- MAIN WORKSPACE -->
+  <main class="workspace">
+
+
+    <!-- LEFT MEDIA DOCK -->
+    <aside class="left-dock">
+
+      <button class="dock-item active">
+        <span>🎬</span>
+        <small>MEDIA</small>
+      </button>
+
+      <button class="dock-item">
+        <span>📰</span>
+        <small>NEWS</small>
+      </button>
+
+      <button class="dock-item">
+        <span>✨</span>
+        <small>AI</small>
+      </button>
+
+      <button class="dock-item">
+        <span>🎨</span>
+        <small>GRAPHICS</small>
+      </button>
+
+      <button class="dock-item">
+        <span>🎵</span>
+        <small>AUDIO</small>
+      </button>
+
+      <div class="dock-spacer"></div>
+
+      <button class="dock-item">
+        <span>💾</span>
+        <small>PROJECTS</small>
+      </button>
+
+    </aside>
+
+
+    <!-- MEDIA PANEL -->
+    <aside class="media-panel">
+
+      <div class="panel-title">
+        <span>MEDIA</span>
+        <button class="plus-btn">＋</button>
+      </div>
+
+      <label class="upload-card">
+
+        <input
+          id="videoInput"
+          type="file"
+          accept="video/*"
+        >
+
+        <div class="upload-icon">＋</div>
+
+        <strong>ADD VIDEO</strong>
+
+        <span>Presenter footage</span>
+
+      </label>
+
+
+      <div class="media-section">
+
+        <div class="section-label">
+          SUPPORTING MEDIA
         </div>
+
+        <div class="media-add">
+
+          <button>＋</button>
+
+          <span>Photos & Videos</span>
+
+        </div>
+
       </div>
 
-      <div class="desk">
-        <div class="desk-logo">SCAG</div>
+
+      <div class="media-section">
+
+        <div class="section-label">
+          CURRENT CLIP
+        </div>
+
+        <div id="clipName" class="clip-empty">
+          No video selected
+        </div>
+
       </div>
 
-      <div class="chair chair-left"></div>
-      <div class="chair chair-right"></div>
+    </aside>
 
-      <div class="studio-title">
-        SENIOR CHIEF ADANO GIRLS SENIOR SCHOOL
-        <small>DETERMINED TO EXCEL</small>
+
+    <!-- CENTER -->
+    <section class="center">
+
+      <!-- PREVIEW HEADER -->
+      <div class="preview-toolbar">
+
+        <div class="preview-title">
+
+          <span class="red-live"></span>
+
+          <strong>PROGRAM PREVIEW</strong>
+
+        </div>
+
+        <div class="preview-tools">
+
+          <button>16:9</button>
+          <button>9:16</button>
+          <button>⛶</button>
+
+        </div>
+
       </div>
 
-    </div>
 
-    <div id="processing" class="processing hidden">
+      <!-- ACTUAL STUDIO -->
+      <div class="studio-frame">
 
-      <div class="spinner"></div>
+        <div class="studio">
 
-      <h3>AI NEWS DIRECTOR</h3>
+          <!-- LED WALL -->
+          <div class="led-wall">
+
+            <div class="grid-lines"></div>
+
+            <div class="led-brand">
+              SCAG
+              <span>LIVE TV</span>
+            </div>
+
+            <div
+              id="studioHeadline"
+              class="led-headline"
+            >
+              NEWS
+            </div>
+
+          </div>
+
+
+          <!-- FLOOR -->
+          <div class="studio-floor"></div>
+
+
+          <!-- DESK -->
+          <div class="anchor-desk">
+
+            <div class="desk-top"></div>
+
+            <div class="desk-front">
+
+              <div class="desk-logo">
+                SCAG
+              </div>
+
+              <div class="desk-line"></div>
+
+            </div>
+
+          </div>
+
+
+          <!-- TWO CHAIRS -->
+          <div class="chair left-chair">
+            <div class="chair-back"></div>
+            <div class="chair-seat"></div>
+          </div>
+
+          <div class="chair right-chair">
+            <div class="chair-back"></div>
+            <div class="chair-seat"></div>
+          </div>
+
+
+          <!-- SOURCE VIDEO PREVIEW -->
+          <div
+            id="presenterPlaceholder"
+            class="presenter-placeholder"
+          >
+
+            <div class="camera-icon">
+              🎥
+            </div>
+
+            <span>
+              PRESENTER WILL APPEAR HERE
+            </span>
+
+          </div>
+
+          <video
+            id="sourceVideo"
+            class="presenter-video"
+            controls
+            playsinline
+          ></video>
+
+
+          <!-- LOWER THIRD -->
+          <div
+            id="lowerThirdPreview"
+            class="lower-third"
+          >
+
+            <div class="lower-accent"></div>
+
+            <div>
+
+              <strong id="lowerName">
+                SCAG LIVE TV
+              </strong>
+
+              <span>
+                SENIOR CHIEF ADANO GIRLS SENIOR SCHOOL
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- TICKER -->
+          <div class="ticker">
+
+            <div class="ticker-label">
+              SCAG NEWS
+            </div>
+
+            <div
+              id="tickerText"
+              class="ticker-text"
+            >
+              DETERMINED TO EXCEL
+            </div>
+
+          </div>
+
+
+          <!-- WATERMARK -->
+          <div class="watermark">
+            SCAG LIVE TV
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- TRANSPORT -->
+      <div class="transport">
+
+        <button class="transport-btn">
+          ↶
+        </button>
+
+        <button
+          id="playBtn"
+          class="play-btn"
+        >
+          ▶
+        </button>
+
+        <button class="transport-btn">
+          ↷
+        </button>
+
+        <div class="timeline">
+
+          <div class="timeline-progress"></div>
+
+        </div>
+
+        <span class="timecode">
+          00:00
+        </span>
+
+      </div>
+
+
+      <!-- AI DIRECTOR -->
+      <div class="director-bar">
+
+        <div class="director-status">
+
+          <div class="ai-orb">
+            ✦
+          </div>
+
+          <div>
+
+            <strong>
+              AI NEWS DIRECTOR
+            </strong>
+
+            <span id="aiStatus">
+              Ready to create your broadcast
+            </span>
+
+          </div>
+
+        </div>
+
+        <button
+          id="directorBtn"
+          class="director-btn"
+        >
+
+          <span>✦</span>
+
+          CREATE WITH AI DIRECTOR
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- RIGHT CONTROL PANEL -->
+    <aside class="control-panel">
+
+
+      <!-- SCENE -->
+      <section class="control-section">
+
+        <div class="control-heading">
+
+          <span>STUDIO SCENE</span>
+
+          <span class="green-dot"></span>
+
+        </div>
+
+
+        <div class="scene-grid">
+
+          <button
+            class="scene active"
+            data-scene="main"
+          >
+
+            <div class="scene-preview main-scene">
+              <span>SCAG</span>
+            </div>
+
+            <small>MAIN NEWS</small>
+
+          </button>
+
+
+          <button
+            class="scene"
+            data-scene="single"
+          >
+
+            <div class="scene-preview single-scene">
+              <span>●</span>
+            </div>
+
+            <small>SINGLE</small>
+
+          </button>
+
+
+          <button
+            class="scene"
+            data-scene="standing"
+          >
+
+            <div class="scene-preview standing-scene">
+              <span>●</span>
+            </div>
+
+            <small>STANDING</small>
+
+          </button>
+
+
+          <button
+            class="scene"
+            data-scene="breaking"
+          >
+
+            <div class="scene-preview breaking-scene">
+              <b>BREAKING</b>
+            </div>
+
+            <small>BREAKING</small>
+
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- STORY -->
+      <section class="control-section">
+
+        <div class="control-heading">
+          STORY
+        </div>
+
+
+        <input
+          id="headline"
+          class="control-input"
+          placeholder="Headline"
+        >
+
+
+        <input
+          id="lowerThird"
+          class="control-input"
+          placeholder="Presenter name"
+        >
+
+
+        <input
+          id="ticker"
+          class="control-input"
+          placeholder="Ticker"
+        >
+
+      </section>
+
+
+      <!-- AI ANALYSIS -->
+      <section class="analysis-card">
+
+        <div class="analysis-icon">
+          ✦
+        </div>
+
+        <div>
+
+          <strong>AI ANALYSIS</strong>
+
+          <p>
+            Presenter detection<br>
+            Movement tracking<br>
+            Camera framing<br>
+            Studio positioning
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- EXPORT -->
+      <section class="export-section">
+
+        <button class="save-btn">
+          💾 SAVE PROJECT
+        </button>
+
+        <button class="export-btn">
+          EXPORT MP4
+        </button>
+
+      </section>
+
+    </aside>
+
+  </main>
+
+
+  <!-- PROCESSING OVERLAY -->
+  <div
+    id="processing"
+    class="processing hidden"
+  >
+
+    <div class="processing-box">
+
+      <div class="ai-big">
+        ✦
+      </div>
+
+      <h2>AI NEWS DIRECTOR</h2>
 
       <p id="processingMessage">
-        Preparing your production...
+        Preparing your broadcast...
       </p>
 
-      <div class="progress">
-        <div id="progressBar"></div>
+      <div class="big-progress">
+
+        <div
+          id="progressBar"
+        ></div>
+
       </div>
 
-      <strong id="progressText">0%</strong>
-
-    </div>
-
-    <div id="result" class="result hidden">
-
-      <h3>PRODUCTION READY</h3>
-
-      <video id="resultVideo"
-             controls
-             playsinline></video>
-
-      <a id="downloadBtn"
-         class="download"
-         download>
-        DOWNLOAD MP4
-      </a>
+      <strong id="progressText">
+        0%
+      </strong>
 
     </div>
 
   </div>
 
-</section>
 
-</main>
-
-<footer>
-  SCAG LIVE TV • Senior Chief Adano Girls Senior School • Determined to Excel
-</footer>
+</div>
 
 <script src="app.js"></script>
 
